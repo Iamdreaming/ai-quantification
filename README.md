@@ -1,6 +1,6 @@
 # AI Quantification (vn.py 策略示例)
 
-基于 [vn.py](https://www.vnpy.com/) 打造的一套轻量化量化策略示例，包含趋势跟随与均值回归两类 CTA 策略，并提供可直接运行的回测脚本，帮助你快速评估策略表现与参数敏感度。
+基于 [vn.py](https://www.vnpy.com/) 打造的一套轻量化量化策略示例，包含趋势跟随、均值回归以及面向 A 股的趋势突破策略，并提供可直接运行的回测脚本，帮助你快速评估策略表现与参数敏感度。
 
 ## 仓库结构
 
@@ -9,6 +9,7 @@
 │   └── run_backtest.py
 ├── strategies/               # 策略源码
 │   ├── __init__.py
+│   ├── ashare_momentum_strategy.py
 │   ├── bollinger_reversion_strategy.py
 │   └── double_ma_strategy.py
 ├── requirements.txt          # 依赖声明
@@ -26,6 +27,11 @@
 - **核心逻辑**：价格触及布林带上下轨进场，回到中轨附近或触发止损即离场。
 - **主要参数**：`boll_window`、`entry_dev`、`exit_dev`、`stop_multiplier`、`fixed_size`。
 - **适用场景**：震荡市、区间波动明显的标的。
+
+### 3. AshareMomentumStrategy —— A股趋势突破
+- **核心逻辑**：在快慢均线共振的前提下，突破 `breakout_window` 最高价才开仓，避免追高至涨停（`limit_pct`/`limit_buffer`），并用 ATR 追踪止损在恐慌下跌或回撤时平仓。
+- **主要参数**：`fast_window`、`slow_window`、`breakout_window`、`atr_window`、`atr_multiplier`、`limit_pct`、`limit_buffer`、`fixed_size`。
+- **适用场景**：A股单边上涨或放量突破行情，偏好做多、希望规避涨跌停价格约束的策略。
 
 ## 快速开始
 
@@ -50,6 +56,20 @@
    - 初始化回测引擎并加载数据（需在 vn.py 中配置好本地数据库或数据服务）；
    - 运行回测、打印核心绩效指标；
    - 弹出 vn.py 自带的收益曲线与回撤曲线。
+
+   针对 A 股的趋势突破策略示例：
+   ```bash
+   python backtests/run_backtest.py \
+       --strategy ashare_momentum \
+       --vt-symbol 600000.SH \
+       --start 2021-01-01 \
+       --end   2022-12-31 \
+       --interval daily \
+       --capital 500000 \
+       --size 100 \
+       --pricetick 0.01
+   ```
+   其中 `size=100` 对应 A 股一手，策略会自动避免追涨停并在跌停附近及时止盈/止损。
 
 ## 参数自定义
 

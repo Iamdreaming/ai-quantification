@@ -10,11 +10,12 @@ from vnpy.app.cta_strategy import CtaTemplate
 from vnpy.app.cta_strategy.backtesting import BacktestingEngine
 from vnpy.trader.constant import Interval
 
-from strategies import BollingerReversionStrategy, DoubleMaStrategy
+from strategies import AshareMomentumStrategy, BollingerReversionStrategy, DoubleMaStrategy
 
 STRATEGIES: Dict[str, Type[CtaTemplate]] = {
     "double_ma": DoubleMaStrategy,
     "bollinger": BollingerReversionStrategy,
+    "ashare_momentum": AshareMomentumStrategy,
 }
 
 DEFAULT_SETTINGS = {
@@ -31,6 +32,16 @@ DEFAULT_SETTINGS = {
         "exit_dev": 0.8,
         "stop_multiplier": 3.0,
         "fixed_size": 1,
+    },
+    "ashare_momentum": {
+        "fast_window": 20,
+        "slow_window": 60,
+        "breakout_window": 30,
+        "atr_window": 14,
+        "atr_multiplier": 2.5,
+        "limit_pct": 0.095,
+        "limit_buffer": 0.002,
+        "fixed_size": 100,
     },
 }
 
